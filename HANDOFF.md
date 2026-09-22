@@ -44,11 +44,18 @@ curl -s https://spinner.barosfamily.org/ | shasum -a 256
 Interface changes go through Claude Design. These knobs live in the exported JS if
 you need to edit the bundle directly:
 
-- **Student list** — search `Levi Hansen`. Comma-separated string of 13 names.
+- **Student list** — since the Sept 2026 export there's an "Edit students" dialog
+  in the app itself (one name per line or comma-separated; saving starts a new
+  recital). The edited list is stored per-browser under `localStorage` key
+  `recital-under-the-stars-students` and overrides the bundled default — so it only
+  applies on the device where it was entered. The bundled default still ships in
+  the export (search `Levi Hansen`, comma-separated string of 13 names); change it
+  in Claude Design when the new list should apply everywhere.
 - **Spin duration** — `spinSeconds`, default `3.5` (range 1–8).
 - **Accent colour** — `--color-accent` in a `:root` block.
 - **Saved progress** — `localStorage` key `recital-under-the-stars-v2`, shape
-  `{ played, current, phase }`. "Start over" clears it.
+  `{ played, current, phase }`. "Start over" clears it after a native browser
+  confirm dialog (which embedded/automated browsers may suppress).
 
 ## Gotchas
 
