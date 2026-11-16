@@ -10,10 +10,26 @@ names and lands on the pick; the programme on the right fills in as students go.
 ## Source of truth
 
 **Claude Design is the source of truth.** The interface is edited there, not here.
-This repo holds only the exported build.
+`index.html` at the root is the exported build.
 
-The old local build chain (`*.dc.html` source + `support.js` + `_ds/`) is gone and
-is not coming back. Don't try to reconstruct it — export from Claude Design instead.
+**Backup of the editable source: `_source/`** (added Nov 2026 from a Claude Design
+export zip whose `publish/index.html` was byte-identical to the live `index.html`):
+
+| File | Purpose |
+|---|---|
+| `_source/Recital Under The Stars.dc.html` | editable source (Design Component format) |
+| `_source/export-src.html` | same, plus a thumbnail `<template>` |
+| `_source/support.js` | Claude Design runtime the `.dc.html` loads (`<script src="./support.js">`); already bundled into `index.html` |
+| `_source/_ds/` | "Modernist" design system (styles + tokens) the source links to |
+
+Open the `.dc.html` in a browser from inside `_source/` to preview it. Prefer editing
+in Claude Design and exporting; use this copy if Claude Design isn't available. Any
+hand edit here still has to end up in `index.html` to go live.
+
+GitHub Pages builds with Jekyll by default, which skips `_`-prefixed folders, so
+`_source/` is not served on the live site. **Don't add a `.nojekyll` file**, or
+`_source/` would start being served. The original zip is also in Matt's Google
+Drive → AI Documents and Files → `Recital Under The Stars.zip`.
 
 ## Deploy workflow
 
@@ -38,6 +54,7 @@ curl -s https://spinner.barosfamily.org/ | shasum -a 256
 | `index.html` | the whole app — this is what gets deployed |
 | `CNAME` | `spinner.barosfamily.org`; GitHub Pages needs this at repo root |
 | `robots.txt` | `Disallow: /` — keeps the students' names out of search engines |
+| `_source/` | backup of the editable source (see above); not served by Pages |
 
 ## Making changes
 
