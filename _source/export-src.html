@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+<template id="__bundler_thumbnail" data-bg-color="#f3f2f2">
+  <svg viewBox="0 0 1200 800" xmlns="http://www.w3.org/2000/svg">
+    <rect x="240" y="260" width="720" height="280" fill="none" stroke="#201e1d" stroke-width="16"/>
+    <rect x="240" y="353" width="720" height="94" fill="none" stroke="#1d4ed8" stroke-width="16"/>
+    <rect x="300" y="380" width="420" height="40" fill="#1d4ed8"/>
+  </svg>
+</template>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <title>Recital Spinner</title>
+  <link rel="stylesheet" href="_ds/modernist-4fd4ddca-4083-4e4a-b93e-b49aa91b1bd6/styles.css">
+  <script src="_ds/modernist-4fd4ddca-4083-4e4a-b93e-b49aa91b1bd6/_ds_bundle.js"></script>
+  <style>
+    html, body { margin:0; background: var(--color-bg); color: var(--color-text); font-family: var(--font-body); }
+    a { color: var(--color-accent-700); } a:hover { color: var(--color-accent-600); }
+    button:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 2px; }
+    :root { --color-accent:#1d4ed8; --color-accent-2:#3b6fe0; --color-accent-100:#eef3ff; --color-accent-200:#d9e4ff; --color-accent-300:#b8ccff; --color-accent-400:#7fa3ff; --color-accent-500:#3b6fe0; --color-accent-600:#1d4ed8; --color-accent-700:#1538a8; --color-accent-800:#0f2878; --color-accent-900:#0c1a4a; }
+  </style>
+</helmet>
+<div style="min-height:100vh; display:flex; flex-direction:column; max-width:1200px; margin:0 auto; padding:0 var(--space-6); box-sizing:border-box;">
+  <header style="display:flex; justify-content:space-between; align-items:flex-end; gap:var(--space-4); padding:var(--space-6) 0 var(--space-4); border-bottom:2px solid var(--color-divider);">
+    <div>
+      <div style="font-size:12px; letter-spacing:.12em; text-transform:uppercase; color:var(--color-neutral-700); margin-bottom:var(--space-2);">Baros Piano Studio</div>
+      <h1 style="font-family:var(--font-heading); font-weight:var(--font-heading-weight); font-size:clamp(32px,5vw,56px); line-height:1; margin:0; letter-spacing:-.02em;">Recital Under The Stars</h1>
+    </div>
+    <div style="display:flex; flex-direction:column; align-items:flex-end; gap:var(--space-2); white-space:nowrap;">
+      <div style="font-size:14px; color:var(--color-neutral-700);">{{ playedCount }} of {{ total }} played</div>
+      <div style="display:flex; gap:var(--space-4);">
+        <button onClick="{{ openEditor }}" style="background:none; border:0; padding:0; font-family:var(--font-body); font-size:13px; color:var(--color-accent-700); text-decoration:underline; cursor:pointer;" style-hover="color:var(--color-accent-600)">Edit students</button>
+        <button onClick="{{ confirmReset }}" style="background:none; border:0; padding:0; font-family:var(--font-body); font-size:13px; color:var(--color-accent-700); text-decoration:underline; cursor:pointer;" style-hover="color:var(--color-accent-600)">Start over</button>
+      </div>
+    </div>
+  </header>
+
+  <sc-if value="{{ editing }}" hint-placeholder-val="{{ false }}">
+    <div style="position:fixed; inset:0; z-index:50; background:color-mix(in srgb, var(--color-text) 55%, transparent); display:flex; align-items:center; justify-content:center; padding:var(--space-4);">
+      <div style="background:var(--color-bg); width:100%; max-width:520px; padding:var(--space-6); box-shadow:var(--shadow-lg); border-top:4px solid var(--color-accent); display:flex; flex-direction:column; gap:var(--space-4);">
+        <div>
+          <div style="font-family:var(--font-heading); font-weight:var(--font-heading-weight); font-size:24px; letter-spacing:-.02em;">Students</div>
+          <div style="font-size:14px; color:var(--color-neutral-700); margin-top:var(--space-1);">Paste one name per line (or separated by commas). Saving starts a new recital.</div>
+        </div>
+        <textarea value="{{ draft }}" onChange="{{ onDraft }}" rows="12" spellcheck="false" style="width:100%; box-sizing:border-box; padding:var(--space-3); border:2px solid var(--color-divider); background:#fff; color:var(--color-text); font-family:var(--font-body); font-size:16px; line-height:1.5; resize:vertical;" style-focus="border-color:var(--color-accent); outline:none"></textarea>
+        <div style="display:flex; justify-content:space-between; align-items:center; gap:var(--space-4);">
+          <div style="font-size:13px; color:var(--color-neutral-700);">{{ draftCount }} students</div>
+          <div style="display:flex; gap:var(--space-3);">
+            <button onClick="{{ closeEditor }}" style="padding:var(--space-3) var(--space-4); border:2px solid var(--color-text); background:transparent; color:var(--color-text); font-family:var(--font-body); font-size:15px; cursor:pointer;" style-hover="background:var(--color-accent-100)">Cancel</button>
+            <button onClick="{{ saveStudents }}" disabled="{{ draftEmpty }}" style="padding:var(--space-3) var(--space-4); border:0; background:var(--color-accent); color:#fff; font-family:var(--font-body); font-size:15px; font-weight:600; cursor:pointer; opacity:{{ saveOpacity }};" style-hover="background:var(--color-accent-600)">Save and start</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
+  <main style="display:grid; grid-template-columns:repeat(auto-fit, minmax(300px, 1fr)); flex:1;">
+    <section style="padding:var(--space-8) var(--space-6) var(--space-8) 0; border-right:2px solid var(--color-divider); display:flex; flex-direction:column; gap:var(--space-6);">
+      <div style="font-size:12px; letter-spacing:.12em; text-transform:uppercase; color:var(--color-neutral-700);">{{ stageLabel }}</div>
+
+      <div style="position:relative; height:400px; overflow:hidden; perspective:900px;">
+        <div style="position:absolute; top:152px; left:0; right:0; height:96px; border-top:2px solid var(--color-accent); border-bottom:2px solid var(--color-accent); pointer-events:none; z-index:0;"></div>
+        <div style="position:absolute; top:200px; left:0; right:0; transform-style:preserve-3d; transform: translateZ({{ drumZ }}px) rotateX({{ drumAngle }}deg); transition: {{ drumTransition }};">
+          <sc-for list="{{ faces }}" as="f" hint-placeholder-count="13">
+            <div style="position:absolute; top:-48px; left:0; right:0; height:96px; display:flex; align-items:center; padding:0 var(--space-4); backface-visibility:hidden; transform:{{ f.transform }}; font-family:var(--font-heading); font-weight:var(--font-heading-weight); font-size:clamp(28px,3.5vw,44px); letter-spacing:-.02em; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; color:{{ f.color }}; text-decoration:{{ f.deco }};">{{ f.name }}</div>
+          </sc-for>
+        </div>
+        <div style="position:absolute; inset:0; pointer-events:none; z-index:2; background:linear-gradient(to bottom, var(--color-bg) 0%, transparent 30%, transparent 70%, var(--color-bg) 100%);"></div>
+        <sc-if value="{{ showMessage }}" hint-placeholder-val="{{ false }}">
+          <div style="position:absolute; inset:0; z-index:3; display:flex; align-items:center; padding:0 var(--space-4); background:var(--color-bg); font-family:var(--font-heading); font-weight:var(--font-heading-weight); font-size:clamp(28px,3.5vw,44px); letter-spacing:-.02em; color:var(--color-accent);">{{ message }}</div>
+        </sc-if>
+      </div>
+
+      <sc-if value="{{ showSpin }}" hint-placeholder-val="{{ true }}">
+        <button onClick="{{ spin }}" disabled="{{ spinning }}" style="display:flex; flex-direction:column; align-items:center; justify-content:center; gap:var(--space-1); width:100%; padding:var(--space-6); border:0; border-radius:14px; box-shadow:var(--shadow-md); background:var(--color-accent); color:#fff; font-family:var(--font-heading); font-weight:var(--font-heading-weight); font-size:22px; text-align:center; cursor:pointer; opacity:{{ btnOpacity }};" style-hover="background:var(--color-accent-600)" style-active="background:var(--color-accent-700)">
+          <span>{{ spinLabel }}</span>
+          <span style="font-size:14px; font-weight:400; letter-spacing:.08em; text-transform:uppercase;">{{ remainingCount }} remaining</span>
+        </button>
+      </sc-if>
+      <sc-if value="{{ showDone }}" hint-placeholder-val="{{ false }}">
+        <button onClick="{{ reset }}" style="display:flex; align-items:center; justify-content:center; width:100%; padding:var(--space-6); border:2px solid var(--color-text); border-radius:14px; background:transparent; color:var(--color-text); font-family:var(--font-heading); font-weight:var(--font-heading-weight); font-size:22px; text-align:center; cursor:pointer;" style-hover="background:var(--color-accent-100)" style-active="background:var(--color-accent-200)">Start a new recital</button>
+      </sc-if>
+    </section>
+
+    <section style="padding:var(--space-8) 0 var(--space-8) var(--space-6);">
+      <div style="font-size:12px; letter-spacing:.12em; text-transform:uppercase; color:var(--color-neutral-700); margin-bottom:var(--space-4);">Performers</div>
+      <ol style="list-style:none; margin:0; padding:0; display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); border-top:2px solid var(--color-divider); border-left:2px solid var(--color-divider);">
+        <sc-for list="{{ roster }}" as="s" hint-placeholder-count="12">
+          <li style="display:flex; align-items:center; gap:var(--space-3); padding:var(--space-3) var(--space-4); min-height:56px; border-right:2px solid var(--color-divider); border-bottom:2px solid var(--color-divider); box-sizing:border-box; background:{{ s.bg }}; color:{{ s.color }};">
+            <span style="font-size:12px; width:24px; flex:none; color:{{ s.numColor }};">{{ s.order }}</span>
+            <span style="font-size:16px; font-weight:{{ s.weight }}; text-decoration:{{ s.deco }}; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">{{ s.name }}</span>
+          </li>
+        </sc-for>
+      </ol>
+    </section>
+  </main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;students&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;Levi Hansen, Ivy Hansen, Gwenny Hansen, Bronwen Hansen, Madeleine Hansen, Hannah Winegar, Will Winegar, Lucy Winegar, Clara Winegar, Kiersten Himebaugh, Braelyn Himebaugh, Calvin Seguin, Coen Smith&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Students&quot;},&quot;spinSeconds&quot;:{&quot;editor&quot;:&quot;range&quot;,&quot;default&quot;:3.5,&quot;min&quot;:1,&quot;max&quot;:8,&quot;step&quot;:0.5,&quot;unit&quot;:&quot;s&quot;,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;Wheel&quot;}}">
+class Component extends DCLogic {
+  KEY = 'recital-under-the-stars-v2';
+  state = { played: [], current: null, spinning: false, angle: 0, transition: 'none', phase: 'idle', students: null, editing: false, draft: '' };
+  NAMES_KEY = 'recital-under-the-stars-students';
+  parseNames(raw) { return raw.split(/[\n,;\t]+/).map(s => s.trim()).filter(Boolean); }
+  openEditor = () => this.setState({ editing: true, draft: this.names().join('\n') });
+  closeEditor = () => this.setState({ editing: false });
+  onDraft = (e) => this.setState({ draft: e.target.value });
+  saveStudents = () => {
+    const list = this.parseNames(this.state.draft);
+    if (!list.length) return;
+    try { localStorage.setItem(this.NAMES_KEY, JSON.stringify(list)); } catch (e) {}
+    this.setState({ students: list, editing: false, played: [], current: null, spinning: false, angle: 0, transition: 'none', phase: 'idle' }, () => this.save());
+  };
+  FACE_H = 96;
+  step() { return 360 / Math.max(this.names().length, 3); }
+  radius() { return this.FACE_H / (2 * Math.tan((this.step() / 2) * Math.PI / 180)); }
+
+  names() {
+    if (this.state.students && this.state.students.length) return this.state.students;
+    const raw = this.props.students ?? 'Levi Hansen, Ivy Hansen, Gwenny Hansen, Bronwen Hansen, Madeleine Hansen, Hannah Winegar, Will Winegar, Lucy Winegar, Clara Winegar, Kiersten Himebaugh, Braelyn Himebaugh, Calvin Seguin, Coen Smith';
+    return this.parseNames(raw);
+  }
+  componentDidMount() {
+    try {
+      const list = JSON.parse(localStorage.getItem(this.NAMES_KEY) || 'null');
+      if (Array.isArray(list) && list.length) this.setState({ students: list });
+    } catch (e) {}
+    try {
+      const saved = JSON.parse(localStorage.getItem(this.KEY) || 'null');
+      if (saved && Array.isArray(saved.played)) this.setState({ played: saved.played, current: saved.current ?? null, phase: saved.phase || 'idle' }, () => this.setState({ angle: this.state.current ? this.names().indexOf(this.state.current) * this.step() : 0 }));
+    } catch (e) {}
+  }
+  save(extra) {
+    const s = { ...this.state, ...extra };
+    try { localStorage.setItem(this.KEY, JSON.stringify({ played: s.played, current: s.current, phase: s.phase })); } catch (e) {}
+  }
+  spin = () => {
+    if (this.state.spinning) return;
+    const names = this.names();
+    const played = this.state.current ? [...this.state.played, this.state.current] : this.state.played;
+    const remaining = names.filter(n => !played.includes(n));
+    if (!remaining.length) return;
+    const pick = remaining[Math.floor(Math.random() * remaining.length)];
+    const step = this.step();
+    const target = names.indexOf(pick) * step;
+    const prev = this.state.angle;
+    const delta = ((target - prev) % 360 + 360) % 360;
+    const angle = prev + 3 * 360 + delta;
+    const dur = Number(this.props.spinSeconds ?? 3.5);
+    this.setState({ spinning: true, played, current: null, phase: 'spinning', angle, transition: 'transform ' + dur + 's cubic-bezier(.12,.8,.2,1)' });
+    setTimeout(() => {
+      const done = played.length + 1 >= names.length;
+      this.setState({ spinning: false, current: pick, phase: done ? 'last' : 'playing' }, () => this.save());
+    }, dur * 1000 + 50);
+  };
+  reset = () => {
+    this.setState({ played: [], current: null, spinning: false, angle: 0, transition: 'none', phase: 'idle' }, () => this.save());
+  };
+  confirmReset = () => {
+    if (this.state.phase === 'idle' || window.confirm('Start over? This clears who has played.')) this.reset();
+  };
+  renderVals() {
+    const names = this.names();
+    const { played, current, spinning, phase } = this.state;
+    const remaining = names.filter(n => !played.includes(n) && n !== current);
+    const finishedAll = phase === 'finished';
+    const roster = names.map(n => {
+      const pi = played.indexOf(n);
+      const isCur = n === current;
+      const isPlayed = pi >= 0 || (finishedAll && isCur);
+      return {
+        name: n,
+        order: pi >= 0 ? String(pi + 1).padStart(2, '0') : isCur ? String(played.length + 1).padStart(2, '0') : '—',
+        bg: isCur && !finishedAll ? 'var(--color-accent)' : 'transparent',
+        color: isCur && !finishedAll ? '#fff' : isPlayed ? 'var(--color-neutral-500)' : 'var(--color-text)',
+        numColor: isCur && !finishedAll ? '#fff' : 'var(--color-neutral-600)',
+        weight: isCur ? 700 : 400,
+        deco: 'none'
+      };
+    });
+    let stageLabel = 'Ready to begin', spinLabel = 'Spin for the first student';
+    if (spinning) { stageLabel = 'Choosing…'; spinLabel = 'Spinning'; }
+    else if (phase === 'playing') { stageLabel = 'Now playing'; spinLabel = 'Finished — spin for next'; }
+    else if (phase === 'last') { stageLabel = 'Now playing — final piece'; spinLabel = 'Finished — end the recital'; }
+    const showDone = finishedAll;
+    const spinFn = phase === 'last' ? () => this.setState({ phase: 'finished', played: [...played, current], current: null }, () => this.save()) : this.spin;
+    const step = this.step(), R = this.radius();
+    const faces = names.map((n, i) => {
+      const done = played.includes(n), cur = n === current && !finishedAll;
+      return { name: n, transform: 'rotateX(' + (-i * step) + 'deg) translateZ(' + R + 'px)', color: cur ? 'var(--color-accent)' : done ? 'var(--color-neutral-500)' : 'var(--color-text)', deco: done ? 'line-through' : 'none' };
+    });
+    return {
+      total: names.length, playedCount: played.length + (current && finishedAll ? 1 : 0),
+      remainingCount: remaining.length,
+      stageLabel: finishedAll ? 'Recital complete' : stageLabel, spinLabel,
+      faces, drumZ: -R, drumAngle: this.state.angle, drumTransition: this.state.transition,
+      showMessage: finishedAll, message: 'Thank you for playing',
+      spinning, btnOpacity: spinning ? 0.6 : 1,
+      showSpin: !showDone, showDone, spin: spinFn, reset: this.reset, confirmReset: this.confirmReset, roster,
+      editing: this.state.editing, draft: this.state.draft, onDraft: this.onDraft, openEditor: this.openEditor, closeEditor: this.closeEditor, saveStudents: this.saveStudents,
+      draftCount: this.parseNames(this.state.draft).length, draftEmpty: !this.parseNames(this.state.draft).length, saveOpacity: this.parseNames(this.state.draft).length ? 1 : 0.45
+    };
+  }
+}
+</script>
+</body>
+</html>
